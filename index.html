@@ -77,7 +77,6 @@
     </div>
 
     <button class="btn-main" id="submitBtn" onclick="processAndSync()">SAVE & GENERATE REPORT</button>
-    <div id="status" style="text-align:center; color:#d4af37; margin-top:10px;"></div>
 </div>
 
 <div id="reportPage" class="container">
@@ -90,39 +89,35 @@
 <script>
     document.getElementById('date').valueAsDate = new Date();
     
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhDFFjeftKxv4suTRflMNaOSTu_7w9zZxKNV_Chvl-GZqfkoj-siyxhKmK33CSHZapPA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6wJvrbPoLqlQxnvf_uJOVdnup8MV4t_TYq5Wsp5PLvAPpYNFl3R4eHf5f2Zh-qIOjLA/exec";
 
-    function generateFormat(d, tmc, tmcCash, tmcUpi, tmcCard, tmcNeft, isHistory, ptTillDate) {
-        const tGym = Number(d.mCash)+Number(d.mUpi)+Number(d.mCard)+Number(d.mNeft);
-        const tPt = Number(d.pCash)+Number(d.pUpi)+Number(d.pCard)+Number(d.pNeft);
-        
-        return `Date:- ${d.date}${isHistory ? " (HISTORY)" : ""}
+    function generateFormat(d, tmc, ptTillDate) {
+        // Combined Totals (Gym + PT) for today's collection
+        const totalCashToday = Number(d.mCash) + Number(d.pCash);
+        const totalUpiToday = Number(d.mUpi) + Number(d.pUpi);
+        const totalCardToday = Number(d.mCard) + Number(d.pCard);
+        const totalNeftToday = Number(d.mNeft) + Number(d.pNeft);
+        const grandTotalToday = totalCashToday + totalUpiToday + totalCardToday + totalNeftToday;
+
+        // PT Only Total Today
+        const totalPtToday = Number(d.pCash) + Number(d.pUpi) + Number(d.pCard) + Number(d.pNeft);
+
+        return `Date:- ${d.date}
 
 TMC (Till Date): ${Number(tmc).toLocaleString()}/-
 
-Gym Today's Collection: ${tGym.toLocaleString()}/-
-Cash: ${d.mCash}/-
-UPI: ${d.mUpi}/-
-Card: ${d.mCard}/-
-Neft: ${d.mNeft}/-
+Gym Today’s Collection: ${grandTotalToday.toLocaleString()}/-
+Cash: ${totalCashToday}/- | UPI: ${totalUpiToday}/-
+Card: ${totalCardToday}/- | Neft: ${totalNeftToday}/-
 
 PT Collection (Till Date): ${Number(ptTillDate).toLocaleString()}/-
-Today's PT Collection: ${tPt.toLocaleString()}/-
-Cash: ${d.pCash}/-
-UPI: ${d.pUpi}/-
-Card: ${d.pCard}/-
-Neft: ${d.pNeft}/-
+Today's PT Collection: ${totalPtToday.toLocaleString()}/-
+Cash: ${d.pCash}/- | UPI: ${d.pUpi}/-
+Card: ${d.pCard}/- | Neft: ${d.pNeft}/-
 
 Today's Total Enquiries: ${d.enq}
 Gym Memberships: ${Number(d.nSale)+Number(d.ren)}
-New Sale: ${d.nSale}
-Renewal: ${d.ren}
-
---- TOTAL MONTHLY SUMMARY ---
-Total TMC Cash: ${Number(tmcCash).toLocaleString()}/-
-Total TMC UPI: ${Number(tmcUpi).toLocaleString()}/-
-Total TMC Card: ${Number(tmcCard || 0).toLocaleString()}/-
-Total TMC NEFT: ${Number(tmcNeft || 0).toLocaleString()}/-
+New Sale: ${d.nSale} | Renewal: ${d.ren}
 
 Personal Collection:
 Komal Mam: ${d.komal}/-
@@ -136,9 +131,7 @@ Evening: ${d.shiftE}`;
 
     async function fetchHistory() {
         const dateVal = document.getElementById('date').value;
-        const status = document.getElementById('status');
         if(!dateVal) return alert("Select Date!");
-        status.innerText = "Fetching...";
         
         try {
             const resp = await fetch(`${SCRIPT_URL}?date=${dateVal}`);
@@ -152,12 +145,11 @@ Evening: ${d.shiftE}`;
                     komal: r[12], priya: r[13], shahil: r[14],
                     shiftM: r[15], shiftE: r[16]
                 };
-                document.getElementById('reportDisplay').innerText = generateFormat(d, data.tmcTotal, data.tmcCash, data.tmcUpi, data.tmcCard, data.tmcNeft, true, data.ptTillDate);
+                document.getElementById('reportDisplay').innerText = generateFormat(d, data.tmcTotal, data.ptTillDate);
                 document.getElementById('entryPage').style.display = 'none';
                 document.getElementById('reportPage').style.display = 'block';
             } else { alert("Data nahi mila!"); }
-        } catch (e) { alert("Connection Error!"); }
-        status.innerText = "";
+        } catch (e) { alert("Error fetching data!"); }
     }
 
     async function processAndSync() {
@@ -181,6 +173,7 @@ Evening: ${d.shiftE}`;
             shiftM: document.getElementById('sM').value || "-",
             shiftE: document.getElementById('sE').value || "-"
         };
+        // Grand Total of everything today
         d.todayTotal = Number(d.mCash)+Number(d.mUpi)+Number(d.mCard)+Number(d.mNeft)+Number(d.pCash)+Number(d.pUpi)+Number(d.pCard)+Number(d.pNeft);
         
         btn.disabled = true;
