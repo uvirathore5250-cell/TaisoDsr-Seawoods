@@ -3,131 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAISO - OFFICIAL DSR</title>
+    <title>TAISO DSR - CRM STYLE</title>
     <style>
-        :root { --gold: #d4af37; --bg: #000; --card: #111; --text: #fff; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; padding-bottom: 50px; }
-        .header { text-align: center; border-bottom: 2px solid var(--gold); padding: 20px 0; margin-bottom: 25px; }
-        .header h2 { margin: 0; color: var(--gold); letter-spacing: 3px; font-size: 24px; }
+        :root { --neon: #92d050; --bg: #000; --card: #111; --gold: #d4af37; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; padding: 0; margin: 0; padding-bottom: 85px; }
         
-        .section-title { color: var(--gold); font-size: 14px; text-transform: uppercase; margin: 20px 0 10px 5px; font-weight: bold; border-left: 3px solid var(--gold); padding-left: 10px; }
-        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; margin-bottom: 15px; }
+        /* Header */
+        .header { position: fixed; top: 0; left: 0; width: 100%; background: #1a1a1a; padding: 15px 0; text-align: center; border-bottom: 2px solid var(--neon); z-index: 1000; }
         
-        label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; margin-left: 5px; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-        input:focus { border-color: var(--gold); outline: none; }
+        /* Bottom Nav */
+        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; border-top: 1px solid #333; z-index: 1000; }
+        .nav-item { flex: 1; padding: 15px; text-align: center; color: #666; font-weight: bold; cursor: pointer; }
+        .nav-item.active { color: var(--neon); border-top: 3px solid var(--neon); background: #222; }
 
-        .btn-save { width: 100%; padding: 18px; background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
-        .btn-whatsapp { width: 100%; padding: 15px; background: #25D366; color: #fff; font-weight: bold; border: none; border-radius: 12px; margin-top: 20px; cursor: pointer; }
+        .content-page { display: none; padding: 85px 15px 20px 15px; }
+        .content-page.active { display: block; }
+
+        /* CRM Style Cards */
+        .dsr-card { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 12px; border: 1px solid #222; border-left: 5px solid var(--neon); }
+        .history-box { font-size: 11px; background: #000; padding: 10px; border-radius: 8px; margin: 10px 0; color: #ccc; border: 1px dashed #444; white-space: pre-line; }
         
+        /* Form Elements */
+        input, textarea, .save-btn { width: 100%; padding: 14px; margin: 8px 0; background: #050505; border: 1px solid #333; color: #fff; border-radius: 10px; box-sizing: border-box; }
+        .save-btn { background: var(--neon); color: #000; font-weight: bold; border: none; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        
+        .label-tag { font-size: 10px; color: var(--neon); text-transform: uppercase; margin-left: 5px; font-weight: bold; }
         .row { display: flex; gap: 10px; }
         .row div { flex: 1; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>TAISO DSR</h2>
-        <div style="font-size: 12px; color: #666; margin-top: 5px;">DAILY SALES REPORT SYSTEM</div>
-    </div>
+    <div class="header"><b>TAISO DSR SYSTEM</b></div>
 
-    <div class="card">
-        <label>Report Date</label>
-        <input type="date" id="reportDate">
-    </div>
+    <div id="page-add" class="content-page active">
+        <div style="background:var(--card); padding:20px; border-radius:20px; border: 1px solid #222;">
+            <h3 style="color:var(--neon); margin-top:0;">Daily Sales Entry</h3>
+            
+            <label class="label-tag">Report Date</label>
+            <input type="date" id="rDate">
 
-    <div class="section-title">Membership Sale</div>
-    <div class="card">
-        <div class="row">
-            <div><label>Cash</label><input type="number" id="gCash" value="0"></div>
-            <div><label>UPI</label><input type="number" id="gUpi" value="0"></div>
-        </div>
-        <div class="row">
-            <div><label>Card</label><input type="number" id="gCard" value="0"></div>
-            <div><label>NEFT</label><input type="number" id="gNeft" value="0"></div>
-        </div>
-    </div>
+            <div class="row">
+                <div><label class="label-tag">Gym Cash</label><input type="number" id="gCash" value="0"></div>
+                <div><label class="label-tag">Gym UPI</label><input type="number" id="gUpi" value="0"></div>
+            </div>
 
-    <div class="section-title">Personal Training (PT)</div>
-    <div class="card">
-        <div class="row">
-            <div><label>Cash</label><input type="number" id="ptCash" value="0"></div>
-            <div><label>UPI</label><input type="number" id="ptUpi" value="0"></div>
-        </div>
-    </div>
+            <div class="row">
+                <div><label class="label-tag">PT Cash</label><input type="number" id="pCash" value="0"></div>
+                <div><label class="label-tag">PT UPI</label><input type="number" id="pUpi" value="0"></div>
+            </div>
 
-    <div class="section-title">Conversion & Inquiries</div>
-    <div class="card">
-        <label>Total Enquiries</label><input type="number" id="enq" value="0">
-        <div class="row">
-            <div><label>New Sales</label><input type="number" id="newSales" value="0"></div>
-            <div><label>Renewals</label><input type="number" id="renewals" value="0"></div>
+            <label class="label-tag">Total Enquiries Today</label>
+            <input type="number" id="enq" value="0">
+
+            <label class="label-tag">Special Notes / Remarks</label>
+            <textarea id="note" rows="3" placeholder="Enter today's summary..."></textarea>
+            
+            <button onclick="submitDSR()" id="mainBtn" class="save-btn">SAVE TO CLOUD</button>
         </div>
     </div>
 
-    <div class="section-title">Personal Collection</div>
-    <div class="card">
-        <label>Yuvraj Sir</label><input type="number" id="staffY" value="0">
-        <label>Naeem</label><input type="number" id="staffN" value="0">
-        <label>Rohini Mam</label><input type="number" id="staffR" value="0">
+    <div id="page-history" class="content-page">
+        <div id="historyContainer"></div>
     </div>
 
-    <button onclick="submitDSR()" id="saveBtn" class="btn-save">SAVE TO CLOUD</button>
-    <button onclick="shareWhatsApp()" class="btn-whatsapp">SHARE ON WHATSAPP</button>
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="nav('add', this)">➕ ADD</div>
+        <div class="nav-item" onclick="nav('history', this)">📜 HISTORY</div>
+    </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzcJUmXAmYO_EWzLXJc7jtce9mZ3V-KOzitSLoeurpKg9WxLP_rNboEETI7eFRM_9dxjg/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycby5RGdPRECI2ZJZLp_gY-hcV4XgVmT4sr3JxT9pB8V3PcUAH1qoP59jXI3H6m-vhld4ag/exec'; 
+        let reports = [];
 
-        // Auto-set today's date
-        document.getElementById('reportDate').valueAsDate = new Date();
+        // Set default date to today
+        document.getElementById('rDate').valueAsDate = new Date();
+
+        function nav(p, el) {
+            document.querySelectorAll('.content-page').forEach(pg => pg.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nv => nv.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
+            el.classList.add('active');
+            if(p === 'history') sync();
+        }
+
+        async function sync() {
+            const cont = document.getElementById('historyContainer');
+            cont.innerHTML = "<p style='text-align:center; color:#666;'>Loading History...</p>";
+            try {
+                const res = await fetch(scriptURL + '?t=' + Date.now());
+                reports = await res.json();
+                render();
+            } catch(e) { cont.innerHTML = "Error loading data."; }
+        }
 
         async function submitDSR() {
-            const btn = document.getElementById('saveBtn');
-            btn.innerText = "Syncing Data...";
-            btn.style.opacity = "0.5";
+            const btn = document.getElementById('mainBtn');
+            const originalText = btn.innerText;
+            btn.innerText = "Syncing...";
+            btn.disabled = true;
 
-            const data = {
-                date: document.getElementById('reportDate').value,
-                gymCash: document.getElementById('gCash').value,
-                gymUpi: document.getElementById('gUpi').value,
-                gymCard: document.getElementById('gCard').value,
-                gymNeft: document.getElementById('gNeft').value,
-                ptCash: document.getElementById('ptCash').value,
-                ptUpi: document.getElementById('ptUpi').value,
+            const gCash = Number(document.getElementById('gCash').value);
+            const gUpi = Number(document.getElementById('gUpi').value);
+            const pCash = Number(document.getElementById('pCash').value);
+            const pUpi = Number(document.getElementById('pUpi').value);
+            const dateVal = document.getElementById('rDate').value;
+            const note = document.getElementById('note').value;
+
+            // Creating CRM style history log
+            const historyLog = `[Report Date: ${dateVal}]\nTotal Gym: ₹${gCash + gUpi}\nTotal PT: ₹${pCash + pUpi}\nEnquiries: ${document.getElementById('enq').value}\nNotes: ${note}`;
+
+            const payload = {
+                date: dateVal,
+                gymCash: gCash,
+                gymUpi: gUpi,
+                ptCash: pCash,
+                ptUpi: pUpi,
                 enq: document.getElementById('enq').value,
-                newSales: document.getElementById('newSales').value,
-                renewals: document.getElementById('renewals').value,
-                yuvraj: document.getElementById('staffY').value,
-                naeem: document.getElementById('staffN').value,
-                rohini: document.getElementById('staffR').value
+                history: historyLog
             };
 
             try {
-                await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-                alert("DSR Saved Successfully!");
-                btn.innerText = "SAVE TO CLOUD";
-                btn.style.opacity = "1";
+                await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                alert("Report Saved Successfully!");
+                location.reload();
             } catch (e) {
-                alert("Error saving data!");
-                btn.innerText = "SAVE TO CLOUD";
+                alert("Failed to save.");
+                btn.innerText = originalText;
+                btn.disabled = false;
             }
         }
 
-        function shareWhatsApp() {
-            const date = document.getElementById('reportDate').value;
-            const gTotal = Number(document.getElementById('gCash').value) + Number(document.getElementById('gUpi').value) + Number(document.getElementById('gCard').value) + Number(document.getElementById('gNeft').value);
-            const ptTotal = Number(document.getElementById('ptCash').value) + Number(document.getElementById('ptUpi').value);
-            
-            const text = `*TAISO DSR REPORT - ${date}*%0A%0A` +
-                         `*Gym Collection:* ₹${gTotal}%0A` +
-                         `*PT Collection:* ₹${ptTotal}%0A` +
-                         `*Enquiries:* ${document.getElementById('enq').value}%0A` +
-                         `*New Sales:* ${document.getElementById('newSales').value}%0A` +
-                         `*Renewals:* ${document.getElementById('renewals').value}%0A%0A` +
-                         `_Report generated by Taiso App_`;
-            
-            window.open(`https://wa.me/?text=${text}`, '_blank');
+        function render() {
+            const cont = document.getElementById('historyContainer');
+            cont.innerHTML = '';
+
+            if(reports.length === 0) {
+                cont.innerHTML = "<p style='text-align:center; color:#666;'>No reports found.</p>";
+                return;
+            }
+
+            [...reports].reverse().forEach((r) => {
+                const div = document.createElement('div');
+                div.className = 'dsr-card';
+                // Date formatting for header
+                const displayDate = new Date(r.date).toLocaleDateString('en-IN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+                
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b style="color:var(--neon);">${displayDate}</b>
+                        <span style="font-size:12px; background:#222; padding:2px 8px; border-radius:5px;">₹${Number(r.gymCash||0)+Number(r.gymUpi||0)+Number(r.ptCash||0)+Number(r.ptUpi||0)}</span>
+                    </div>
+                    <div class="history-box">${r.history || 'No details recorded.'}</div>
+                `;
+                cont.appendChild(div);
+            });
         }
+        window.onload = sync;
     </script>
 </body>
 </html>
