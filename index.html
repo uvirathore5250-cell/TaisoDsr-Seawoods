@@ -91,17 +91,15 @@
 <script>
     document.getElementById('date').valueAsDate = new Date();
     
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0e1i3Y_Drkenthbi_DRLMsrGO458QVRkZQdfcVi2W_p5QdLw-gvZln2dXPyoM28iQUA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_nCXxzFcgywlokpDhhOSxJjf9elMcsoAYMreZw1cxTEixbEfeALVseYt8h7Bs4WV5Aw/exec";
 
     function generateFormat(d, tmc, ptTillDate, tmcCash, tmcUpi, tmcCard, tmcNeft) {
-        // Today's Combined (Gym + PT)
         const tCashToday = Number(d.mCash) + Number(d.pCash);
         const tUpiToday = Number(d.mUpi) + Number(d.pUpi);
         const tCardToday = Number(d.mCard) + Number(d.pCard);
         const tNeftToday = Number(d.mNeft) + Number(d.pNeft);
         const grandTotalToday = tCashToday + tUpiToday + tCardToday + tNeftToday;
 
-        // Today's PT Only
         const tPtToday = Number(d.pCash) + Number(d.pUpi) + Number(d.pCard) + Number(d.pNeft);
 
         return `Date:- ${d.date}
@@ -109,17 +107,22 @@
 TMC (Till Date): ${Number(tmc).toLocaleString()}/-
 
 Gym Today’s Collection: ${grandTotalToday.toLocaleString()}/-
-Cash: ${tCashToday}/- | UPI: ${tUpiToday}/-
-Card: ${tCardToday}/- | Neft: ${tNeftToday}/-
+Cash: ${tCashToday.toLocaleString()}/-
+UPI: ${tUpiToday.toLocaleString()}/-
+Card: ${tCardToday.toLocaleString()}/-
+Neft: ${tNeftToday.toLocaleString()}/-
 
 PT Collection (Till Date): ${Number(ptTillDate).toLocaleString()}/-
 Today's PT Collection: ${tPtToday.toLocaleString()}/-
-Cash: ${d.pCash}/- | UPI: ${d.pUpi}/-
-Card: ${d.pCard}/- | Neft: ${d.pNeft}/-
+Cash: ${Number(d.pCash).toLocaleString()}/-
+UPI: ${Number(d.pUpi).toLocaleString()}/-
+Card: ${Number(d.pCard).toLocaleString()}/-
+Neft: ${Number(d.pNeft).toLocaleString()}/-
 
 Today's Total Enquiries: ${d.enq}
 Gym Memberships: ${Number(d.nSale)+Number(d.ren)}
-New Sale: ${d.nSale} | Renewal: ${d.ren}
+New Sale: ${d.nSale}
+Renewal: ${d.ren}
 
 --- TOTAL MONTHLY SUMMARY ---
 TMC Cash: ${Number(tmcCash).toLocaleString()}/-
