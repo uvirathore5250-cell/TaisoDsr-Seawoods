@@ -1,195 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAISO DSR - Smart Admin</title>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        :root { --gold: #d4af37; --dark-bg: #121212; --card-bg: #1e1e1e; --text: #ffffff; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--dark-bg); color: var(--text); margin: 0; padding: 15px; }
-        .container { max-width: 450px; margin: auto; }
-        .header { text-align: center; border-bottom: 2px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; }
-        .header h1 { color: var(--gold); margin: 0; font-size: 24px; letter-spacing: 2px; }
-        .section { background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
-        .section-title { color: var(--gold); font-weight: bold; margin-bottom: 12px; font-size: 14px; text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 8px; }
-        label { display: block; font-size: 11px; margin-bottom: 5px; color: #888; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; box-sizing: border-box; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; text-align: center; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        .btn-main { background: var(--gold); color: black; }
-        .btn-history { background: #3a3a3a; color: var(--gold); border: 1px solid var(--gold); font-size: 14px; margin-bottom: 10px; }
-        .btn-copy { background: #25D366; color: white; }
-        #reportPage { display: none; }
-        .report-box { background: white; color: black; padding: 25px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; font-size: 14px; line-height: 1.8; border-left: 5px solid var(--gold); }
+        body { font-family: 'Arial', sans-serif; background-color: #000; color: #fff; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; border: 1px solid #c9a050; padding: 15px; border-radius: 10px; }
+        h2 { text-align: center; color: #c9a050; letter-spacing: 2px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-size: 12px; color: #888; }
+        input[type="date"] { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: transparent; border: 1px solid #c9a050; color: #c9a050; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px; }
+        button:hover { background: #c9a050; color: #000; }
+        
+        /* Report Style */
+        #reportCard { display: none; background: #fff; color: #000; padding: 20px; margin-top: 20px; border-radius: 5px; line-height: 1.6; }
+        .report-header { text-align: center; font-weight: bold; border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 5px; }
+        .section-title { font-weight: bold; margin-top: 15px; text-decoration: underline; display: block; }
+        .data-row { display: block; margin-left: 10px; margin-bottom: 2px; }
+        .footer-line { border-top: 1px dashed #000; margin-top: 15px; padding-top: 10px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="entryPage" class="container">
-    <div class="header"><h1>TAISO DSR</h1></div>
+<div class="container">
+    <h2>TAISO DSR</h2>
     
-    <div class="section">
-        <label>Select Date</label>
-        <input type="date" id="date">
-        <button class="btn-history" onclick="fetchHistory()">VIEW OLD DSR (HISTORY)</button>
+    <div class="input-group">
+        <label>SELECT DATE</label>
+        <input type="date" id="datePicker">
+        <button onclick="getHistory()">VIEW OLD DSR (HISTORY)</button>
     </div>
 
-    <div class="section">
-        <div class="section-title">1. Membership Sale</div>
-        <div class="grid-2">
-            <div><label>Cash</label><input type="number" id="mCash" value="0"></div>
-            <div><label>UPI</label><input type="number" id="mUpi" value="0"></div>
-            <div><label>Card</label><input type="number" id="mCard" value="0"></div>
-            <div><label>NEFT</label><input type="number" id="mNeft" value="0"></div>
-        </div>
+    <div id="reportCard">
+        <div class="report-header">FINAL DSR</div>
+        
+        <div><strong>Date:-</strong> <span id="outDate"></span> (HISTORY)</div>
+        <div style="margin-top: 10px;"><strong>TMC Till Date :</strong> <span id="outTmc"></span>/-</div>
+
+        <span class="section-title">Gym today's collection:-</span>
+        <span class="data-row">Cash: <span id="outGCash"></span>/-</span>
+        <span class="data-row">UPI: <span id="outGUpi"></span>/-</span>
+        <span class="data-row">Card: <span id="outGCard"></span>/-</span>
+        <span class="data-row">Neft: <span id="outGNeft"></span>/-</span>
+
+        <span class="section-title">PT Collection (Till Date): <span id="outPtTotal"></span>/-</span>
+        <span class="section-title">Today's PT collection:-</span>
+        <span class="data-row">Cash: <span id="outPCash"></span>/-</span>
+        <span class="data-row">UPI: <span id="outPUpi"></span>/-</span>
+        <span class="data-row">Card: <span id="outPCard"></span>/-</span>
+        <span class="data-row">Neft: <span id="outPNeft"></span>/-</span>
+
+        <div class="footer-line">--- TOTAL MONTHLY SUMMARY ---</div>
     </div>
-
-    <div class="section">
-        <div class="section-title">2. PT Collection</div>
-        <div class="grid-2">
-            <div><label>Cash</label><input type="number" id="pCash" value="0"></div>
-            <div><label>UPI</label><input type="number" id="pUpi" value="0"></div>
-            <div><label>Card</label><input type="number" id="pCard" value="0"></div>
-            <div><label>NEFT</label><input type="number" id="pNeft" value="0"></div>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">3. Enquiry & Conversion</div>
-        <label>Total Enquiries</label><input type="number" id="enq" value="0">
-        <div class="grid-2">
-            <div><label>New Sales</label><input type="number" id="nSale" value="0"></div>
-            <div><label>Renewals</label><input type="number" id="ren" value="0"></div>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">4. Personal Collection</div>
-        <label>Komal Mam</label><input type="number" id="komal" value="0">
-        <label>Priya Mam</label><input type="number" id="priya" value="0">
-        <label>Shahil Sir</label><input type="number" id="shahil" value="0">
-    </div>
-
-    <div class="section">
-        <div class="section-title">5. Staffing</div>
-        <label>Morning Staff</label><input type="text" id="sM" value="-">
-        <label>Evening Staff</label><input type="text" id="sE" value="-">
-    </div>
-
-    <button class="btn-main" id="submitBtn" onclick="processAndSync()">SAVE & GENERATE REPORT</button>
-    <div id="status" style="text-align:center; color:#d4af37; margin-top:10px;"></div>
-</div>
-
-<div id="reportPage" class="container">
-    <div class="header"><h1>FINAL DSR</h1></div>
-    <div id="reportDisplay" class="report-box"></div>
-    <button class="btn-copy" onclick="copyDSR()">COPY FOR WHATSAPP</button>
-    <button class="btn-main" onclick="location.reload()">BACK TO ENTRY</button>
 </div>
 
 <script>
-    document.getElementById('date').valueAsDate = new Date();
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1gT6STwYybAgm2ltgqh8uWjWM5FA-qkD2fKIJa2bszbvbS7MwM5njg0A1p6QcSBUjaw/exec";
-
-    function generateFormat(d, tmc, tmcCash, tmcUpi, tmcCard, tmcNeft, isHistory, ptTillDate) {
-        const tGym = Number(d.mCash)+Number(d.mUpi)+Number(d.mCard)+Number(d.mNeft);
-        const tPt = Number(d.pCash)+Number(d.pUpi)+Number(d.pCard)+Number(d.pNeft);
+    function getHistory() {
+        var date = document.getElementById('datePicker').value;
+        if(!date) { alert("Please select a date"); return; }
         
-        return `Date:- ${d.date}${isHistory ? " (HISTORY)" : ""}
-
-TMC Till Date : ${Number(tmc).toLocaleString()}/-
-
-Gym today’s collection:- ${tGym.toLocaleString()}/-
-Cash: ${d.mCash}/- | UPI: ${d.mUpi}/-
-Card: ${d.mCard}/- | Neft: ${d.mNeft}/-
-
-PT Collection (Till Date): ${Number(ptTillDate).toLocaleString()}/-
-Today's PT collection: ${tPt.toLocaleString()}/-
-CASH: ${d.pCash}/- | UPI: ${d.pUpi}/-
-CARD: ${d.pCard}/- | NEFT: ${d.pNeft}/-
-
-Today's Total Enquiries: ${d.enq}
-Gym membership: ${Number(d.nSale)+Number(d.ren)}
-No. of new sale: ${d.nSale}
-No. of renewal: ${d.ren}
-
---- TOTAL MONTHLY SUMMARY ---
-Total TMC Cash: ${Number(tmcCash).toLocaleString()}/-
-Total TMC UPI: ${Number(tmcUpi).toLocaleString()}/-
-Total TMC Card: ${Number(tmcCard || 0).toLocaleString()}/-
-Total TMC NEFT: ${Number(tmcNeft || 0).toLocaleString()}/-
-
-Personal collection 
-Komal Mam: ${d.komal}/-
-Priya Mam: ${d.priya}/-
-Shahil Sir: ${d.shahil}/-
-
-Shift
-Morning: ${d.shiftM}
-Evening: ${d.shiftE}`;
-    }
-
-    async function fetchHistory() {
-        const dateVal = document.getElementById('date').value;
-        const status = document.getElementById('status');
-        if(!dateVal) return alert("Select Date!");
-        status.innerText = "Fetching...";
-        
-        try {
-            const resp = await fetch(`${SCRIPT_URL}?date=${dateVal}`);
-            const data = await resp.json();
-            if (data.status === "Found") {
-                const r = data.row;
-                const d = {
-                    date: dateVal, mCash: r[1], mUpi: r[2], mCard: r[3], mNeft: r[4],
-                    pCash: r[5], pUpi: r[6], pCard: r[7], pNeft: r[8],
-                    enq: r[9], nSale: r[10], ren: r[11],
-                    komal: r[12], priya: r[13], shahil: r[14],
-                    shiftM: r[15], shiftE: r[16]
-                };
-                document.getElementById('reportDisplay').innerText = generateFormat(d, data.tmcTotal, data.tmcCash, data.tmcUpi, data.tmcCard, data.tmcNeft, true, data.ptTillDate);
-                document.getElementById('entryPage').style.display = 'none';
-                document.getElementById('reportPage').style.display = 'block';
-            } else { alert("Data nahi mila!"); }
-        } catch (e) { alert("Connection Error!"); }
-        status.innerText = "";
-    }
-
-    async function processAndSync() {
-        const btn = document.getElementById('submitBtn');
-        const d = {
-            date: document.getElementById('date').value,
-            mCash: document.getElementById('mCash').value || 0,
-            mUpi: document.getElementById('mUpi').value || 0,
-            mCard: document.getElementById('mCard').value || 0,
-            mNeft: document.getElementById('mNeft').value || 0,
-            pCash: document.getElementById('pCash').value || 0,
-            pUpi: document.getElementById('pUpi').value || 0,
-            pCard: document.getElementById('pCard').value || 0,
-            pNeft: document.getElementById('pNeft').value || 0,
-            enq: document.getElementById('enq').value || 0,
-            nSale: document.getElementById('nSale').value || 0,
-            ren: document.getElementById('ren').value || 0,
-            komal: document.getElementById('komal').value || 0,
-            priya: document.getElementById('priya').value || 0,
-            shahil: document.getElementById('shahil').value || 0,
-            shiftM: document.getElementById('sM').value || "-",
-            shiftE: document.getElementById('sE').value || "-"
-        };
-        d.todayTotal = Number(d.mCash)+Number(d.mUpi)+Number(d.mCard)+Number(d.mNeft)+Number(d.pCash)+Number(d.pUpi)+Number(d.pCard)+Number(d.pNeft);
-        
+        // Button text change for loading
+        var btn = document.querySelector('button');
+        btn.innerText = "LOADING...";
         btn.disabled = true;
-        try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-            alert("Data Saved! Success.");
-            location.reload();
-        } catch (e) { alert("Save Error!"); btn.disabled = false; }
-    }
 
-    function copyDSR() {
-        navigator.clipboard.writeText(document.getElementById('reportDisplay').innerText);
-        alert("Report Copied!");
+        google.script.run.withSuccessHandler(function(res) {
+            btn.innerText = "VIEW OLD DSR (HISTORY)";
+            btn.disabled = false;
+
+            if(res.status === "success") {
+                document.getElementById('reportCard').style.display = "block";
+                document.getElementById('outDate').innerText = res.date;
+                document.getElementById('outTmc').innerText = res.tmcTillDate.toLocaleString();
+                
+                // Gym Data
+                document.getElementById('outGCash').innerText = res.gym_cash;
+                document.getElementById('outGUpi').innerText = res.gym_upi;
+                document.getElementById('outGCard').innerText = res.gym_card;
+                document.getElementById('outGNeft').innerText = res.gym_neft;
+
+                // PT Data
+                document.getElementById('outPCash').innerText = res.pt_cash;
+                document.getElementById('outPUpi').innerText = res.pt_upi;
+                document.getElementById('outPCard').innerText = res.pt_card;
+                document.getElementById('outPNeft').innerText = res.pt_neft;
+                
+                // PT Total display logic
+                var ptTotal = Number(res.pt_cash) + Number(res.pt_upi) + Number(res.pt_card) + Number(res.pt_neft);
+                document.getElementById('outPtTotal').innerText = ptTotal;
+
+            } else {
+                alert(res.message);
+                document.getElementById('reportCard').style.display = "none";
+            }
+        }).fetchHistory(date);
     }
 </script>
+
 </body>
 </html>
