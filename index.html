@@ -66,9 +66,9 @@
 
     <div class="section">
         <div class="section-title">4. Personal Collection</div>
-        <label>Yuvraj Sir</label><input type="number" id="yuvraj" value="0">
-        <label>Naeem</label><input type="number" id="naeem" value="0">
-        <label>Rohini</label><input type="number" id="rohini" value="0">
+        <label>Komal Mam</label><input type="number" id="komal" value="0">
+        <label>Yasmeen Mam</label><input type="number" id="yasmeen" value="0">
+        <label>Priya Mam</label><input type="number" id="priya" value="0">
     </div>
 
     <div class="section">
@@ -90,8 +90,6 @@
 
 <script>
     document.getElementById('date').valueAsDate = new Date();
-    
-    // Aapka naya Web App URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww6nI1gj-ltQ1SUq69Zf1_Zn373i6Fe0GseX9qkX0gXQjeMul9PI_pcSo4X3Yo05PZ6A/exec";
 
     function generateFormat(d, tmc, tmcCash, tmcUpi, tmcCard, tmcNeft, isHistory = false) {
@@ -126,9 +124,9 @@ Total TMC Card: ${Number(tmcCard || 0).toLocaleString()}/-
 Total TMC NEFT: ${Number(tmcNeft || 0).toLocaleString()}/-
 
 Personal collection 
-Yuvraj Sir: ${d.yuvraj}/-
-Naeem: ${d.naeem}/-
-Rohini: ${d.rohini}/-
+Komal Mam: ${d.komal}/-
+Yasmeen Mam: ${d.yasmeen}/-
+Priya Mam: ${d.priya}/-
 
 Shift
 Morning: ${d.shiftM}
@@ -146,7 +144,7 @@ Evening: ${d.shiftE}`;
             const data = await response.json();
             
             if (data.status === "Not Found") {
-                alert("Data nahi mila! Is date ka data SAVE karein.");
+                alert("Data nahi mila!");
                 status.innerText = "";
             } else {
                 const r = data.row;
@@ -154,7 +152,7 @@ Evening: ${d.shiftE}`;
                     date: dateVal, mCash: r[1], mUpi: r[2], mCard: r[3], mNeft: r[4],
                     pCash: r[5], pUpi: r[6], pCard: r[7], pNeft: r[8],
                     enq: r[9], nSale: r[10], ren: r[11],
-                    yuvraj: r[12], naeem: r[13], rohini: r[14],
+                    komal: r[12], yasmeen: r[13], priya: r[14],
                     shiftM: r[15], shiftE: r[16]
                 };
                 document.getElementById('reportDisplay').innerText = generateFormat(d, data.tmcTotal, data.tmcCash, data.tmcUpi, data.tmcCard, data.tmcNeft, true);
@@ -162,7 +160,7 @@ Evening: ${d.shiftE}`;
                 document.getElementById('reportPage').style.display = 'block';
                 status.innerText = "";
             }
-        } catch (e) { alert("URL/Script Error! Permissions check karein."); status.innerText=""; }
+        } catch (e) { alert("Error!"); status.innerText=""; }
     }
 
     async function processAndSync() {
@@ -181,9 +179,9 @@ Evening: ${d.shiftE}`;
             enq: document.getElementById('enq').value || 0,
             nSale: document.getElementById('nSale').value || 0,
             ren: document.getElementById('ren').value || 0,
-            yuvraj: document.getElementById('yuvraj').value || 0,
-            naeem: document.getElementById('naeem').value || 0,
-            rohini: document.getElementById('rohini').value || 0,
+            komal: document.getElementById('komal').value || 0,
+            yasmeen: document.getElementById('yasmeen').value || 0,
+            priya: document.getElementById('priya').value || 0,
             shiftM: document.getElementById('staffMorning').value || "-",
             shiftE: document.getElementById('staffEvening').value || "-"
         };
@@ -194,7 +192,7 @@ Evening: ${d.shiftE}`;
             btn.disabled = true;
             status.innerText = "Saving...";
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-            alert("Success! Ab History dekhein.");
+            alert("Success!");
             location.reload();
         } catch (e) { alert("Error!"); btn.disabled=false; }
     }
