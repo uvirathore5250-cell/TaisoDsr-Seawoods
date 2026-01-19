@@ -91,6 +91,8 @@
 
 <script>
     document.getElementById('date').valueAsDate = new Date();
+    
+    // Yahan maine naya URL dal diya hai jo tune diya tha
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww6nI1gj-ltQ1SUq69Zf1_Zn373i6Fe0GseX9qkX0gXQjeMul9PI_pcSo4X3Yo05PZ6A/exec";
 
     function generateFormat(d, tmc, tmcCash, tmcUpi, tmcCard, tmcNeft, isHistory = false) {
@@ -138,12 +140,14 @@ Evening: ${d.shiftE}`;
         const dateVal = document.getElementById('date').value;
         const status = document.getElementById('status');
         if(!dateVal) return alert("Select Date!");
-        status.innerText = "Fetching History...";
+        status.innerText = "Connecting...";
+        
         try {
             const response = await fetch(`${SCRIPT_URL}?date=${dateVal}`);
             const data = await response.json();
+            
             if (data.status === "Not Found") {
-                alert("No entry found!");
+                alert("Data nahi mila! Kya aapne is date ka data SAVE kiya tha?");
                 status.innerText = "";
             } else {
                 const r = data.row;
@@ -159,7 +163,11 @@ Evening: ${d.shiftE}`;
                 document.getElementById('reportPage').style.display = 'block';
                 status.innerText = "";
             }
-        } catch (e) { alert("Error!"); status.innerText=""; }
+        } catch (e) { 
+            console.error(e);
+            alert("Error: Web App URL ya Internet check karein."); 
+            status.innerText=""; 
+        }
     }
 
     async function processAndSync() {
@@ -186,13 +194,14 @@ Evening: ${d.shiftE}`;
         };
         const todayTotal = Number(d.mCash) + Number(d.mUpi) + Number(d.mCard) + Number(d.mNeft) + Number(d.pCash) + Number(d.pUpi) + Number(d.pCard) + Number(d.pNeft);
         d.todayTotal = todayTotal;
+
         try {
             btn.disabled = true;
             status.innerText = "Saving...";
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-            alert("Success! Check History for the report.");
+            alert("Success! Ab History check karo.");
             location.reload();
-        } catch (e) { alert("Error!"); btn.disabled=false; }
+        } catch (e) { alert("Save fail!"); btn.disabled=false; }
     }
 
     function copyDSR() {
