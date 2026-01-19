@@ -20,7 +20,7 @@
         .btn-history { background: #3a3a3a; color: var(--gold); border: 1px solid var(--gold); font-size: 14px; margin-bottom: 10px; }
         .btn-copy { background: #25D366; color: white; }
         #reportPage { display: none; }
-        .report-box { background: white; color: black; padding: 25px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; font-size: 14px; line-height: 1.8; border-left: 5px solid var(--gold); }
+        .report-box { background: white; color: black; padding: 25px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; font-size: 15px; line-height: 1.8; border-left: 5px solid var(--gold); }
     </style>
 </head>
 <body>
@@ -90,7 +90,7 @@
 <script>
     document.getElementById('date').valueAsDate = new Date();
     
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnxXFZ-0cOWR9rnQDkQAFDdyjlXrJD3Z-YCmsN4AKz0dnjFeUPKwfVSh8bKQoNXNQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhDFFjeftKxv4suTRflMNaOSTu_7w9zZxKNV_Chvl-GZqfkoj-siyxhKmK33CSHZapPA/exec";
 
     function generateFormat(d, tmc, tmcCash, tmcUpi, tmcCard, tmcNeft, isHistory, ptTillDate) {
         const tGym = Number(d.mCash)+Number(d.mUpi)+Number(d.mCard)+Number(d.mNeft);
@@ -98,21 +98,25 @@
         
         return `Date:- ${d.date}${isHistory ? " (HISTORY)" : ""}
 
-TMC Till Date : ${Number(tmc).toLocaleString()}/-
+TMC (Till Date): ${Number(tmc).toLocaleString()}/-
 
-Gym today’s collection:- ${tGym.toLocaleString()}/-
-Cash: ${d.mCash}/- | UPI: ${d.mUpi}/-
-Card: ${d.mCard}/- | Neft: ${d.mNeft}/-
+Gym Today's Collection: ${tGym.toLocaleString()}/-
+Cash: ${d.mCash}/-
+UPI: ${d.mUpi}/-
+Card: ${d.mCard}/-
+Neft: ${d.mNeft}/-
 
 PT Collection (Till Date): ${Number(ptTillDate).toLocaleString()}/-
-Today's PT collection: ${tPt.toLocaleString()}/-
-CASH: ${d.pCash}/- | UPI: ${d.pUpi}/-
-CARD: ${d.pCard}/- | NEFT: ${d.pNeft}/-
+Today's PT Collection: ${tPt.toLocaleString()}/-
+Cash: ${d.pCash}/-
+UPI: ${d.pUpi}/-
+Card: ${d.pCard}/-
+Neft: ${d.pNeft}/-
 
 Today's Total Enquiries: ${d.enq}
-Gym membership: ${Number(d.nSale)+Number(d.ren)}
-No. of new sale: ${d.nSale}
-No. of renewal: ${d.ren}
+Gym Memberships: ${Number(d.nSale)+Number(d.ren)}
+New Sale: ${d.nSale}
+Renewal: ${d.ren}
 
 --- TOTAL MONTHLY SUMMARY ---
 Total TMC Cash: ${Number(tmcCash).toLocaleString()}/-
@@ -120,12 +124,12 @@ Total TMC UPI: ${Number(tmcUpi).toLocaleString()}/-
 Total TMC Card: ${Number(tmcCard || 0).toLocaleString()}/-
 Total TMC NEFT: ${Number(tmcNeft || 0).toLocaleString()}/-
 
-Personal collection 
+Personal Collection:
 Komal Mam: ${d.komal}/-
 Priya Mam: ${d.priya}/-
 Shahil Sir: ${d.shahil}/-
 
-Shift
+Shift:
 Morning: ${d.shiftM}
 Evening: ${d.shiftE}`;
     }
@@ -158,7 +162,6 @@ Evening: ${d.shiftE}`;
 
     async function processAndSync() {
         const btn = document.getElementById('submitBtn');
-        const status = document.getElementById('status');
         const d = {
             date: document.getElementById('date').value,
             mCash: document.getElementById('mCash').value || 0,
@@ -181,7 +184,6 @@ Evening: ${d.shiftE}`;
         d.todayTotal = Number(d.mCash)+Number(d.mUpi)+Number(d.mCard)+Number(d.mNeft)+Number(d.pCash)+Number(d.pUpi)+Number(d.pCard)+Number(d.pNeft);
         
         btn.disabled = true;
-        status.innerText = "Saving...";
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
             alert("Data Saved! Success.");
