@@ -31,7 +31,7 @@
     <div class="section">
         <label>Select Date</label>
         <input type="date" id="date">
-        <button class="btn-history" onclick="fetchHistory()">VIEW OLD DSR (HISTORY)</button>
+        <button class="btn-history" onclick="fetchHistory()">VIEW HISTORY (REPORT)</button>
     </div>
 
     <div class="section">
@@ -65,8 +65,10 @@
 
     <div class="section">
         <div class="section-title">4. Personal Collection</div>
-        <label>Komal Mam</label><input type="number" id="komal" value="0">
-        <label>Priya Mam</label><input type="number" id="priya" value="0">
+        <div class="grid-2">
+            <div><label>Komal Mam</label><input type="number" id="komal" value="0"></div>
+            <div><label>Priya Mam</label><input type="number" id="priya" value="0"></div>
+        </div>
         <label>Shahil Sir</label><input type="number" id="shahil" value="0">
     </div>
 
@@ -89,35 +91,41 @@
 <script>
     document.getElementById('date').valueAsDate = new Date();
     
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6wJvrbPoLqlQxnvf_uJOVdnup8MV4t_TYq5Wsp5PLvAPpYNFl3R4eHf5f2Zh-qIOjLA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0e1i3Y_Drkenthbi_DRLMsrGO458QVRkZQdfcVi2W_p5QdLw-gvZln2dXPyoM28iQUA/exec";
 
-    function generateFormat(d, tmc, ptTillDate) {
-        // Combined Totals (Gym + PT) for today's collection
-        const totalCashToday = Number(d.mCash) + Number(d.pCash);
-        const totalUpiToday = Number(d.mUpi) + Number(d.pUpi);
-        const totalCardToday = Number(d.mCard) + Number(d.pCard);
-        const totalNeftToday = Number(d.mNeft) + Number(d.pNeft);
-        const grandTotalToday = totalCashToday + totalUpiToday + totalCardToday + totalNeftToday;
+    function generateFormat(d, tmc, ptTillDate, tmcCash, tmcUpi, tmcCard, tmcNeft) {
+        // Today's Combined (Gym + PT)
+        const tCashToday = Number(d.mCash) + Number(d.pCash);
+        const tUpiToday = Number(d.mUpi) + Number(d.pUpi);
+        const tCardToday = Number(d.mCard) + Number(d.pCard);
+        const tNeftToday = Number(d.mNeft) + Number(d.pNeft);
+        const grandTotalToday = tCashToday + tUpiToday + tCardToday + tNeftToday;
 
-        // PT Only Total Today
-        const totalPtToday = Number(d.pCash) + Number(d.pUpi) + Number(d.pCard) + Number(d.pNeft);
+        // Today's PT Only
+        const tPtToday = Number(d.pCash) + Number(d.pUpi) + Number(d.pCard) + Number(d.pNeft);
 
         return `Date:- ${d.date}
 
 TMC (Till Date): ${Number(tmc).toLocaleString()}/-
 
 Gym Today’s Collection: ${grandTotalToday.toLocaleString()}/-
-Cash: ${totalCashToday}/- | UPI: ${totalUpiToday}/-
-Card: ${totalCardToday}/- | Neft: ${totalNeftToday}/-
+Cash: ${tCashToday}/- | UPI: ${tUpiToday}/-
+Card: ${tCardToday}/- | Neft: ${tNeftToday}/-
 
 PT Collection (Till Date): ${Number(ptTillDate).toLocaleString()}/-
-Today's PT Collection: ${totalPtToday.toLocaleString()}/-
+Today's PT Collection: ${tPtToday.toLocaleString()}/-
 Cash: ${d.pCash}/- | UPI: ${d.pUpi}/-
 Card: ${d.pCard}/- | Neft: ${d.pNeft}/-
 
 Today's Total Enquiries: ${d.enq}
 Gym Memberships: ${Number(d.nSale)+Number(d.ren)}
 New Sale: ${d.nSale} | Renewal: ${d.ren}
+
+--- TOTAL MONTHLY SUMMARY ---
+TMC Cash: ${Number(tmcCash).toLocaleString()}/-
+TMC UPI: ${Number(tmcUpi).toLocaleString()}/-
+TMC Card: ${Number(tmcCard).toLocaleString()}/-
+TMC Neft: ${Number(tmcNeft).toLocaleString()}/-
 
 Personal Collection:
 Komal Mam: ${d.komal}/-
@@ -145,7 +153,7 @@ Evening: ${d.shiftE}`;
                     komal: r[12], priya: r[13], shahil: r[14],
                     shiftM: r[15], shiftE: r[16]
                 };
-                document.getElementById('reportDisplay').innerText = generateFormat(d, data.tmcTotal, data.ptTillDate);
+                document.getElementById('reportDisplay').innerText = generateFormat(d, data.tmcTotal, data.ptTillDate, data.tmcCash, data.tmcUpi, data.tmcCard, data.tmcNeft);
                 document.getElementById('entryPage').style.display = 'none';
                 document.getElementById('reportPage').style.display = 'block';
             } else { alert("Data nahi mila!"); }
@@ -173,13 +181,12 @@ Evening: ${d.shiftE}`;
             shiftM: document.getElementById('sM').value || "-",
             shiftE: document.getElementById('sE').value || "-"
         };
-        // Grand Total of everything today
         d.todayTotal = Number(d.mCash)+Number(d.mUpi)+Number(d.mCard)+Number(d.mNeft)+Number(d.pCash)+Number(d.pUpi)+Number(d.pCard)+Number(d.pNeft);
         
         btn.disabled = true;
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-            alert("Data Saved! Success.");
+            alert("Success! Data Saved.");
             location.reload();
         } catch (e) { alert("Save Error!"); btn.disabled = false; }
     }
