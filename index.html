@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TAISO - OFFICIAL DSR</title>
+    <style>
+        :root { --gold: #d4af37; --bg: #000; --card: #111; --text: #fff; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; padding-bottom: 50px; }
+        .header { text-align: center; border-bottom: 2px solid var(--gold); padding: 20px 0; margin-bottom: 25px; }
+        .header h2 { margin: 0; color: var(--gold); letter-spacing: 3px; font-size: 24px; }
+        
+        .section-title { color: var(--gold); font-size: 14px; text-transform: uppercase; margin: 20px 0 10px 5px; font-weight: bold; border-left: 3px solid var(--gold); padding-left: 10px; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; margin-bottom: 15px; }
+        
+        label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; margin-left: 5px; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+        input:focus { border-color: var(--gold); outline: none; }
+
+        .btn-save { width: 100%; padding: 18px; background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+        .btn-whatsapp { width: 100%; padding: 15px; background: #25D366; color: #fff; font-weight: bold; border: none; border-radius: 12px; margin-top: 20px; cursor: pointer; }
+        
+        .row { display: flex; gap: 10px; }
+        .row div { flex: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>TAISO DSR</h2>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">DAILY SALES REPORT SYSTEM</div>
+    </div>
+
+    <div class="card">
+        <label>Report Date</label>
+        <input type="date" id="reportDate">
+    </div>
+
+    <div class="section-title">Membership Sale</div>
+    <div class="card">
+        <div class="row">
+            <div><label>Cash</label><input type="number" id="gCash" value="0"></div>
+            <div><label>UPI</label><input type="number" id="gUpi" value="0"></div>
+        </div>
+        <div class="row">
+            <div><label>Card</label><input type="number" id="gCard" value="0"></div>
+            <div><label>NEFT</label><input type="number" id="gNeft" value="0"></div>
+        </div>
+    </div>
+
+    <div class="section-title">Personal Training (PT)</div>
+    <div class="card">
+        <div class="row">
+            <div><label>Cash</label><input type="number" id="ptCash" value="0"></div>
+            <div><label>UPI</label><input type="number" id="ptUpi" value="0"></div>
+        </div>
+    </div>
+
+    <div class="section-title">Conversion & Inquiries</div>
+    <div class="card">
+        <label>Total Enquiries</label><input type="number" id="enq" value="0">
+        <div class="row">
+            <div><label>New Sales</label><input type="number" id="newSales" value="0"></div>
+            <div><label>Renewals</label><input type="number" id="renewals" value="0"></div>
+        </div>
+    </div>
+
+    <div class="section-title">Personal Collection</div>
+    <div class="card">
+        <label>Yuvraj Sir</label><input type="number" id="staffY" value="0">
+        <label>Naeem</label><input type="number" id="staffN" value="0">
+        <label>Rohini Mam</label><input type="number" id="staffR" value="0">
+    </div>
+
+    <button onclick="submitDSR()" id="saveBtn" class="btn-save">SAVE TO CLOUD</button>
+    <button onclick="shareWhatsApp()" class="btn-whatsapp">SHARE ON WHATSAPP</button>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzcJUmXAmYO_EWzLXJc7jtce9mZ3V-KOzitSLoeurpKg9WxLP_rNboEETI7eFRM_9dxjg/exec';
+
+        // Auto-set today's date
+        document.getElementById('reportDate').valueAsDate = new Date();
+
+        async function submitDSR() {
+            const btn = document.getElementById('saveBtn');
+            btn.innerText = "Syncing Data...";
+            btn.style.opacity = "0.5";
+
+            const data = {
+                date: document.getElementById('reportDate').value,
+                gymCash: document.getElementById('gCash').value,
+                gymUpi: document.getElementById('gUpi').value,
+                gymCard: document.getElementById('gCard').value,
+                gymNeft: document.getElementById('gNeft').value,
+                ptCash: document.getElementById('ptCash').value,
+                ptUpi: document.getElementById('ptUpi').value,
+                enq: document.getElementById('enq').value,
+                newSales: document.getElementById('newSales').value,
+                renewals: document.getElementById('renewals').value,
+                yuvraj: document.getElementById('staffY').value,
+                naeem: document.getElementById('staffN').value,
+                rohini: document.getElementById('staffR').value
+            };
+
+            try {
+                await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+                alert("DSR Saved Successfully!");
+                btn.innerText = "SAVE TO CLOUD";
+                btn.style.opacity = "1";
+            } catch (e) {
+                alert("Error saving data!");
+                btn.innerText = "SAVE TO CLOUD";
+            }
+        }
+
+        function shareWhatsApp() {
+            const date = document.getElementById('reportDate').value;
+            const gTotal = Number(document.getElementById('gCash').value) + Number(document.getElementById('gUpi').value) + Number(document.getElementById('gCard').value) + Number(document.getElementById('gNeft').value);
+            const ptTotal = Number(document.getElementById('ptCash').value) + Number(document.getElementById('ptUpi').value);
+            
+            const text = `*TAISO DSR REPORT - ${date}*%0A%0A` +
+                         `*Gym Collection:* ₹${gTotal}%0A` +
+                         `*PT Collection:* ₹${ptTotal}%0A` +
+                         `*Enquiries:* ${document.getElementById('enq').value}%0A` +
+                         `*New Sales:* ${document.getElementById('newSales').value}%0A` +
+                         `*Renewals:* ${document.getElementById('renewals').value}%0A%0A` +
+                         `_Report generated by Taiso App_`;
+            
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+    </script>
+</body>
+</html>
