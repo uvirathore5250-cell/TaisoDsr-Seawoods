@@ -21,7 +21,6 @@
         .btn-copy { background: #25D366; color: white; }
         #reportPage { display: none; }
         .report-box { background: white; color: black; padding: 25px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; font-size: 14px; line-height: 1.8; border-left: 5px solid var(--gold); }
-        .sync-status { text-align: center; font-size: 12px; color: var(--gold); margin-top: 5px; min-height: 15px; }
     </style>
 </head>
 <body>
@@ -79,7 +78,7 @@
     </div>
 
     <button class="btn-main" id="submitBtn" onclick="processAndSync()">SAVE & GENERATE REPORT</button>
-    <div id="status" class="sync-status"></div>
+    <div id="status" style="text-align:center; color:#d4af37; margin-top:10px;"></div>
 </div>
 
 <div id="reportPage" class="container">
@@ -92,7 +91,7 @@
 <script>
     document.getElementById('date').valueAsDate = new Date();
     
-    // Yahan maine naya URL dal diya hai jo tune diya tha
+    // Aapka naya Web App URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww6nI1gj-ltQ1SUq69Zf1_Zn373i6Fe0GseX9qkX0gXQjeMul9PI_pcSo4X3Yo05PZ6A/exec";
 
     function generateFormat(d, tmc, tmcCash, tmcUpi, tmcCard, tmcNeft, isHistory = false) {
@@ -147,7 +146,7 @@ Evening: ${d.shiftE}`;
             const data = await response.json();
             
             if (data.status === "Not Found") {
-                alert("Data nahi mila! Kya aapne is date ka data SAVE kiya tha?");
+                alert("Data nahi mila! Is date ka data SAVE karein.");
                 status.innerText = "";
             } else {
                 const r = data.row;
@@ -163,11 +162,7 @@ Evening: ${d.shiftE}`;
                 document.getElementById('reportPage').style.display = 'block';
                 status.innerText = "";
             }
-        } catch (e) { 
-            console.error(e);
-            alert("Error: Web App URL ya Internet check karein."); 
-            status.innerText=""; 
-        }
+        } catch (e) { alert("URL/Script Error! Permissions check karein."); status.innerText=""; }
     }
 
     async function processAndSync() {
@@ -199,14 +194,14 @@ Evening: ${d.shiftE}`;
             btn.disabled = true;
             status.innerText = "Saving...";
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-            alert("Success! Ab History check karo.");
+            alert("Success! Ab History dekhein.");
             location.reload();
-        } catch (e) { alert("Save fail!"); btn.disabled=false; }
+        } catch (e) { alert("Error!"); btn.disabled=false; }
     }
 
     function copyDSR() {
         navigator.clipboard.writeText(document.getElementById('reportDisplay').innerText);
-        alert("Copied!");
+        alert("Report Copied!");
     }
 </script>
 </body>
