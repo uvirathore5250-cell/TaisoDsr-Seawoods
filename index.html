@@ -2,162 +2,203 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAISO - OFFICIAL DSR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAISO DSR - Smart Admin</title>
     <style>
-        :root { --neon: #92d050; --bg: #000; --card: #111; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; padding: 0; margin: 0; padding-bottom: 85px; }
-        
-        /* Header */
-        .header { position: fixed; top: 0; width: 100%; background: #1a1a1a; padding: 15px 0; text-align: center; border-bottom: 2px solid var(--neon); z-index: 1000; font-weight: bold; font-size: 18px; }
-        
-        /* Navigation */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; display: flex; border-top: 1px solid #333; z-index: 1000; }
-        .nav-item { flex: 1; padding: 15px; text-align: center; color: #666; font-weight: bold; cursor: pointer; }
-        .nav-item.active { color: var(--neon); border-top: 3px solid var(--neon); background: #222; }
-
-        /* Pages */
-        .content-page { display: none; padding: 85px 15px 20px 15px; }
-        .content-page.active { display: block; }
-
-        /* Card Design (Same as CRM) */
-        .dsr-card { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #222; border-left: 5px solid var(--neon); }
-        .history-box { font-size: 11px; background: #000; padding: 10px; border-radius: 8px; margin: 10px 0; color: #ccc; border: 1px dashed #444; white-space: pre-line; }
-        
-        /* Inputs & Buttons */
-        input, textarea, .save-btn { width: 100%; padding: 14px; margin: 8px 0; background: #050505; border: 1px solid #333; color: #fff; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-        .save-btn { background: var(--neon); color: #000; font-weight: bold; border: none; cursor: pointer; margin-top: 10px; }
-        
-        .update-btn { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: 1px solid var(--neon); background: transparent; color: var(--neon); cursor: pointer; }
-        .update-form { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-top: 10px; display: none; border: 1px solid #333; }
-        
-        label { font-size: 11px; color: var(--neon); margin-left: 5px; text-transform: uppercase; font-weight: bold; }
-        .row { display: flex; gap: 10px; }
-        .row div { flex: 1; }
+        :root { --gold: #d4af37; --dark-bg: #121212; --card-bg: #1e1e1e; --text: #ffffff; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--dark-bg); color: var(--text); margin: 0; padding: 15px; }
+        .container { max-width: 450px; margin: auto; }
+        .header { text-align: center; border-bottom: 2px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; }
+        .header h1 { color: var(--gold); margin: 0; font-size: 24px; letter-spacing: 2px; }
+        .section { background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
+        .section-title { color: var(--gold); font-weight: bold; margin-bottom: 12px; font-size: 14px; text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 8px; }
+        label { display: block; font-size: 11px; margin-bottom: 5px; color: #888; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; box-sizing: border-box; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 6px; font-size: 16px; text-align: center; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn-main { background: var(--gold); color: black; }
+        .btn-history { background: #3a3a3a; color: var(--gold); border: 1px solid var(--gold); font-size: 14px; margin-bottom: 10px; }
+        .btn-copy { background: #25D366; color: white; }
+        #reportPage { display: none; }
+        .report-box { background: white; color: black; padding: 25px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; font-size: 14px; line-height: 1.8; border-left: 5px solid var(--gold); }
+        .sync-status { text-align: center; font-size: 12px; color: var(--gold); margin-top: 5px; min-height: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="header">TAISO DSR SYSTEM</div>
+<div id="entryPage" class="container">
+    <div class="header"><h1>TAISO DSR</h1></div>
 
-    <div id="page-add" class="content-page active">
-        <div style="background:var(--card); padding:20px; border-radius:20px; border: 1px solid #222;">
-            <label>Report Date</label>
-            <input type="date" id="rDate">
+    <div class="section">
+        <label>Select Date</label>
+        <input type="date" id="date">
+        <button class="btn-history" onclick="fetchHistory()">VIEW OLD DSR (HISTORY)</button>
+    </div>
 
-            <div class="row">
-                <div><label>Gym Cash</label><input type="number" id="gCash" value="0"></div>
-                <div><label>Gym UPI</label><input type="number" id="gUpi" value="0"></div>
-            </div>
-
-            <div class="row">
-                <div><label>PT Cash</label><input type="number" id="pCash" value="0"></div>
-                <div><label>PT UPI</label><input type="number" id="pUpi" value="0"></div>
-            </div>
-
-            <label>Enquiries Today</label>
-            <input type="number" id="enq" value="0">
-
-            <label>Summary Notes</label>
-            <textarea id="note" rows="3" placeholder="Enter today's details..."></textarea>
-            
-            <button onclick="submitDSR()" id="mainBtn" class="save-btn">SAVE DSR REPORT</button>
+    <div class="section">
+        <div class="section-title">1. Membership Sale</div>
+        <div class="grid-2">
+            <div><label>Cash</label><input type="number" id="mCash" value="0"></div>
+            <div><label>UPI</label><input type="number" id="mUpi" value="0"></div>
+            <div><label>Card</label><input type="number" id="mCard" value="0"></div>
+            <div><label>NEFT</label><input type="number" id="mNeft" value="0"></div>
         </div>
     </div>
 
-    <div id="page-history" class="content-page">
-        <div id="listContainer"></div>
+    <div class="section">
+        <div class="section-title">2. PT Collection</div>
+        <div class="grid-2">
+            <div><label>Cash</label><input type="number" id="pCash" value="0"></div>
+            <div><label>UPI</label><input type="number" id="pUpi" value="0"></div>
+            <div><label>Card</label><input type="number" id="pCard" value="0"></div>
+            <div><label>NEFT</label><input type="number" id="pNeft" value="0"></div>
+        </div>
     </div>
 
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="nav('add', this)">➕ NEW ENTRY</div>
-        <div class="nav-item" onclick="nav('history', this)">📜 OLD HISTORY</div>
+    <div class="section">
+        <div class="section-title">3. Enquiry & Conversion</div>
+        <label>Total Enquiries</label>
+        <input type="number" id="enq" value="0">
+        <div class="grid-2">
+            <div><label>New Sales</label><input type="number" id="nSale" value="0"></div>
+            <div><label>Renewals</label><input type="number" id="ren" value="0"></div>
+        </div>
     </div>
 
-    <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwXGHsO9GNyIXFflTXTVnfbGtJfCyD1pEO17AiK1egbyiDIejYgi7GQ6Jyfd-KcvPcSpA/exec'; 
-        let reports = [];
+    <div class="section">
+        <div class="section-title">4. Personal Collection</div>
+        <label>Yuvraj Sir</label><input type="number" id="yuvraj" value="0">
+        <label>Naeem</label><input type="number" id="naeem" value="0">
+        <label>Rohini</label><input type="number" id="rohini" value="0">
+    </div>
 
-        document.getElementById('rDate').valueAsDate = new Date();
+    <div class="section">
+        <div class="section-title">5. Staffing</div>
+        <label>Morning Staff</label><input type="text" id="staffMorning" value="-">
+        <label>Evening Staff</label><input type="text" id="staffEvening" value="-">
+    </div>
 
-        function nav(p, el) {
-            document.querySelectorAll('.content-page').forEach(pg => pg.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(nv => nv.classList.remove('active'));
-            document.getElementById('page-' + p).classList.add('active');
-            el.classList.add('active');
-            if(p === 'history') sync();
-        }
+    <button class="btn-main" id="submitBtn" onclick="processAndSync()">SAVE & GENERATE REPORT</button>
+    <div id="status" class="sync-status"></div>
+</div>
 
-        async function sync() {
-            const container = document.getElementById('listContainer');
-            container.innerHTML = "<p style='text-align:center; color:#666;'>Loading History...</p>";
-            try {
-                const res = await fetch(scriptURL + '?t=' + Date.now());
-                reports = await res.json();
-                render();
-            } catch(e) { container.innerHTML = "Error loading data."; }
-        }
+<div id="reportPage" class="container">
+    <div class="header"><h1>FINAL DSR</h1></div>
+    <div id="reportDisplay" class="report-box"></div>
+    <button class="btn-copy" onclick="copyDSR()">COPY FOR WHATSAPP</button>
+    <button class="btn-main" onclick="location.reload()">BACK TO ENTRY</button>
+</div>
 
-        async function submitDSR() {
-            const btn = document.getElementById('mainBtn');
-            btn.innerText = "Saving...";
-            btn.disabled = true;
-            
-            const gC = document.getElementById('gCash').value, gU = document.getElementById('gUpi').value;
-            const pC = document.getElementById('pCash').value, pU = document.getElementById('pUpi').value;
-            const date = document.getElementById('rDate').value;
-            const note = document.getElementById('note').value;
+<script>
+    document.getElementById('date').valueAsDate = new Date();
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww6nI1gj-ltQ1SUq69Zf1_Zn373i6Fe0GseX9qkX0gXQjeMul9PI_pcSo4X3Yo05PZ6A/exec";
 
-            // CRM Style History Logic
-            const historyEntry = `[${new Date().toLocaleDateString()}] Initial: ${note}\nGym Total: ₹${Number(gC)+Number(gU)} | PT Total: ₹${Number(pC)+Number(pU)}\nEnq: ${document.getElementById('enq').value}`;
+    function generateFormat(d, tmc, tmcCash, tmcUpi, tmcCard, tmcNeft, isHistory = false) {
+        const todayGym = Number(d.mCash) + Number(d.mUpi) + Number(d.mCard) + Number(d.mNeft);
+        const todayPt = Number(d.pCash) + Number(d.pUpi) + Number(d.pCard) + Number(d.pNeft);
+        
+        return `Date:- ${d.date}${isHistory ? " (HISTORY)" : ""}
 
-            const payload = {
-                date: date, gymCash: gC, gymUpi: gU, ptCash: pC, ptUpi: pU, enq: document.getElementById('enq').value,
-                history: historyEntry
-            };
+TMC Till Date : ${Number(tmc).toLocaleString()}/-
 
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("Report Saved!");
-            location.reload();
-        }
+Gym today’s collection:- ${todayGym.toLocaleString()}/-
+Cash: ${d.mCash}/-
+Upi: ${d.mUpi}/-
+Card credit/Debit: ${d.mCard}/-
+Neft: ${d.mNeft}/-
 
-        function render() {
-            const cont = document.getElementById('listContainer');
-            cont.innerHTML = '';
-            if(reports.length === 0) {
-                cont.innerHTML = "<p style='text-align:center; color:#666;'>No records found.</p>";
-                return;
+Today's PT collection: ${todayPt.toLocaleString()}/-
+CASH: ${d.pCash}/-
+UPI: ${d.pUpi}/-
+CARD: ${d.pCard}/-
+NEFT: ${d.pNeft}/-
+
+Today's Total Enquiries: ${d.enq}
+Gym membership: ${Number(d.nSale) + Number(d.ren)}
+No. of new sale: ${d.nSale}
+No. of renewal: ${d.ren}
+
+--- TOTAL MONTHLY SUMMARY ---
+Total TMC Cash: ${Number(tmcCash).toLocaleString()}/-
+Total TMC UPI: ${Number(tmcUpi).toLocaleString()}/-
+Total TMC Card: ${Number(tmcCard || 0).toLocaleString()}/-
+Total TMC NEFT: ${Number(tmcNeft || 0).toLocaleString()}/-
+
+Personal collection 
+Yuvraj Sir: ${d.yuvraj}/-
+Naeem: ${d.naeem}/-
+Rohini: ${d.rohini}/-
+
+Shift
+Morning: ${d.shiftM}
+Evening: ${d.shiftE}`;
+    }
+
+    async function fetchHistory() {
+        const dateVal = document.getElementById('date').value;
+        const status = document.getElementById('status');
+        if(!dateVal) return alert("Select Date!");
+        status.innerText = "Fetching History...";
+        try {
+            const response = await fetch(`${SCRIPT_URL}?date=${dateVal}`);
+            const data = await response.json();
+            if (data.status === "Not Found") {
+                alert("No entry found!");
+                status.innerText = "";
+            } else {
+                const r = data.row;
+                const d = {
+                    date: dateVal, mCash: r[1], mUpi: r[2], mCard: r[3], mNeft: r[4],
+                    pCash: r[5], pUpi: r[6], pCard: r[7], pNeft: r[8],
+                    enq: r[9], nSale: r[10], ren: r[11],
+                    yuvraj: r[12], naeem: r[13], rohini: r[14],
+                    shiftM: r[15], shiftE: r[16]
+                };
+                document.getElementById('reportDisplay').innerText = generateFormat(d, data.tmcTotal, data.tmcCash, data.tmcUpi, data.tmcCard, data.tmcNeft, true);
+                document.getElementById('entryPage').style.display = 'none';
+                document.getElementById('reportPage').style.display = 'block';
+                status.innerText = "";
             }
+        } catch (e) { alert("Error!"); status.innerText=""; }
+    }
 
-            [...reports].reverse().forEach((r, idx) => {
-                const realIdx = reports.indexOf(r);
-                const div = document.createElement('div');
-                div.className = 'dsr-card';
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b style="color:var(--neon)">${r.date.split('T')[0]}</b>
-                        <span style="font-size:12px; background:#222; padding:3px 8px; border-radius:5px;">₹${Number(r.gymCash||0)+Number(r.gymUpi||0)+Number(r.ptCash||0)+Number(r.ptUpi||0)}</span>
-                    </div>
-                    <div class="history-box">${r.history || 'No details'}</div>
-                    <button class="update-btn" onclick="document.getElementById('f-${realIdx}').style.display='block'">➕ UPDATE NOTES</button>
-                    <div id="f-${realIdx}" class="update-form">
-                        <textarea id="m-${realIdx}" placeholder="Add more updates..."></textarea>
-                        <button onclick="updateReport(${realIdx})" class="save-btn">SAVE UPDATE</button>
-                    </div>
-                `;
-                cont.appendChild(div);
-            });
-        }
+    async function processAndSync() {
+        const btn = document.getElementById('submitBtn');
+        const status = document.getElementById('status');
+        const d = {
+            date: document.getElementById('date').value,
+            mCash: document.getElementById('mCash').value || 0,
+            mUpi: document.getElementById('mUpi').value || 0,
+            mCard: document.getElementById('mCard').value || 0,
+            mNeft: document.getElementById('mNeft').value || 0,
+            pCash: document.getElementById('pCash').value || 0,
+            pUpi: document.getElementById('pUpi').value || 0,
+            pCard: document.getElementById('pCard').value || 0,
+            pNeft: document.getElementById('pNeft').value || 0,
+            enq: document.getElementById('enq').value || 0,
+            nSale: document.getElementById('nSale').value || 0,
+            ren: document.getElementById('ren').value || 0,
+            yuvraj: document.getElementById('yuvraj').value || 0,
+            naeem: document.getElementById('naeem').value || 0,
+            rohini: document.getElementById('rohini').value || 0,
+            shiftM: document.getElementById('staffMorning').value || "-",
+            shiftE: document.getElementById('staffEvening').value || "-"
+        };
+        const todayTotal = Number(d.mCash) + Number(d.mUpi) + Number(d.mCard) + Number(d.mNeft) + Number(d.pCash) + Number(d.pUpi) + Number(d.pCard) + Number(d.pNeft);
+        d.todayTotal = todayTotal;
+        try {
+            btn.disabled = true;
+            status.innerText = "Saving...";
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
+            alert("Success! Check History for the report.");
+            location.reload();
+        } catch (e) { alert("Error!"); btn.disabled=false; }
+    }
 
-        async function updateReport(idx) {
-            const msg = document.getElementById(`m-${idx}`).value;
-            if(!msg) return alert("Enter something!");
-            const newHistory = reports[idx].history + `\n| [${new Date().toLocaleDateString()}] Update: ${msg}`;
-            const payload = { ...reports[idx], history: newHistory };
-            
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            sync();
-        }
-    </script>
+    function copyDSR() {
+        navigator.clipboard.writeText(document.getElementById('reportDisplay').innerText);
+        alert("Copied!");
+    }
+</script>
 </body>
 </html>
